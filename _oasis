@@ -1,0 +1,24 @@
+OASISFormat: 0.3
+Name:        talib
+Version:     0.1
+Authors:     Vincent Bernardoff
+License:     ISC
+BuildTools:  ocamlbuild
+Plugins:     META (0.3), DevFiles (0.3), StdFiles (0.3)
+
+Synopsis:    Binding to the TA-LIB technical analysis library
+Description: More info at http://ta-lib.org/
+
+Library talib
+  Path:       lib
+  Modules:    Talib
+  CSources: ta_lib_stubs.c
+  CCLib: -lta_lib
+  BuildDepends: bigarray
+
+Executable test
+  Path:    test
+  MainIs: test.ml
+  CompiledObject: best
+  BuildDepends: talib
+  Install: false

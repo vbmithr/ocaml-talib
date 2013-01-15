@@ -1,0 +1,31 @@
+# OASIS_START
+# DO NOT EDIT (digest: 5ae9dc6ed103b8960737384bfd0b1b04)
+# Ignore VCS directories, you can use the same kind of rule outside 
+# OASIS_START/STOP if you want to exclude directories that contains 
+# useless stuff for the build process
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library talib
+"lib/talib.cmxs": use_talib
+<lib/talib.{cma,cmxa}>: oasis_library_talib_cclib
+"lib/libtalib_stubs.lib": oasis_library_talib_cclib
+"lib/dlltalib_stubs.dll": oasis_library_talib_cclib
+"lib/libtalib_stubs.a": oasis_library_talib_cclib
+"lib/dlltalib_stubs.so": oasis_library_talib_cclib
+<lib/talib.{cma,cmxa}>: use_libtalib_stubs
+<lib/*.ml{,i}>: pkg_bigarray
+"lib/ta_lib_stubs.c": pkg_bigarray
+# Executable test
+<test/test.{native,byte}>: use_talib
+<test/test.{native,byte}>: pkg_bigarray
+<test/*.ml{,i}>: use_talib
+<test/*.ml{,i}>: pkg_bigarray
+# OASIS_STOP
