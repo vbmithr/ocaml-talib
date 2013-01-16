@@ -9,6 +9,7 @@ let start, nb_elts, output = ma 0 99 input 16 SMA
 
 
 let _ =
+  Printf.printf "start = %d, nb_elts = %d\n" start nb_elts;
   for i = 0 to nb_elts-1 do
     Printf.printf "%.2f " output.{i}
   done;
