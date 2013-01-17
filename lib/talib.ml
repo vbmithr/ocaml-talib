@@ -59,8 +59,32 @@ external macdext : int -> int -> array_real ->
   int -> ma_type -> int -> ma_type -> int -> ma_type
     -> int * int * array_real * array_real * array_real = "stub_macdext_byte" "stub_macd"
 
+external minus_dm : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_minus_dm"
+
+external plus_dm : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_plus_dm"
+
+external minus_di : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_minus_di_byte" "stub_minus_di"
+
+external plus_di : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_plus_di_byte" "stub_plus_di"
+
+external dx : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_dx_byte" "stub_dx"
+
+external adx : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_adx_byte" "stub_adx"
+
+external adxr : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_adxr_byte" "stub_adxr"
+
 external mom : int -> int -> array_real -> int
   -> int * int * array_real = "stub_mom"
+
+external natr : int -> int -> array_real -> array_real -> array_real
+  -> int -> int * int * array_real = "stub_natr_byte" "stub_natr"
 
 external obv : int -> int -> array_real -> array_real -> int * int * array_real = "stub_obv"
 
@@ -80,6 +104,9 @@ external stoch : int -> int -> array_real -> array_real -> array_real
 external stochf : int -> int -> array_real -> array_real -> array_real
   -> int -> int -> ma_type ->
     int * int * array_real * array_real = "stub_stochf_byte" "stub_stochf"
+
+external trange : int -> int -> array_real -> array_real -> array_real
+  -> int * int * array_real = "stub_trange"
 
 external willr : int -> int -> array_real -> array_real -> array_real -> int
   -> int * int * array_real = "stub_willr_byte" "stub_willr"

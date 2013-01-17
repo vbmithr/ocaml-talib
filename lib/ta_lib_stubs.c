@@ -446,6 +446,60 @@ CAMLprim value stub_macdext_byte(value *argv, int argn)
                       argv[6], argv[7], argv[8]);
 }
 
+CAMLprim value stub_minus_dm (value start, value end, value inhigh, value inlow, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_MINUS_DM_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_MINUS_DM(start_, end_,
+                            (const double *)Data_bigarray_val(inhigh),
+                            (const double *)Data_bigarray_val(inlow),
+                            period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn (result);
+}
+
+CAMLprim value stub_plus_dm (value start, value end, value inhigh, value inlow, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_PLUS_DM_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_PLUS_DM(start_, end_,
+                            (const double *)Data_bigarray_val(inhigh),
+                            (const double *)Data_bigarray_val(inlow),
+                            period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn (result);
+}
+
 CAMLprim value stub_mom (value start, value end, value input, value period)
 {
   CAMLparam4(start, end, input, period);
@@ -472,6 +526,216 @@ CAMLprim value stub_mom (value start, value end, value input, value period)
   CAMLreturn (result);
 }
 
+
+CAMLprim value stub_natr(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_NATR_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_NATR(start_, end_,
+                            (const double *)Data_bigarray_val(inhigh),
+                            (const double *)Data_bigarray_val(inlow),
+                            (const double *)Data_bigarray_val(inclose),
+                            period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_natr_byte(value *argv, int argn)
+{
+  return stub_natr(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+CAMLprim value stub_minus_di(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_MINUS_DI_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_NATR(start_, end_,
+                            (const double *)Data_bigarray_val(inhigh),
+                            (const double *)Data_bigarray_val(inlow),
+                            (const double *)Data_bigarray_val(inclose),
+                            period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_minus_di_byte(value *argv, int argn)
+{
+  return stub_minus_di(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+CAMLprim value stub_plus_di(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_PLUS_DI_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_PLUS_DI(start_, end_,
+                                (const double *)Data_bigarray_val(inhigh),
+                                (const double *)Data_bigarray_val(inlow),
+                                (const double *)Data_bigarray_val(inclose),
+                                period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_plus_di_byte(value *argv, int argn)
+{
+  return stub_plus_di(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+CAMLprim value stub_dx(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_DX_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_DX(start_, end_,
+                                (const double *)Data_bigarray_val(inhigh),
+                                (const double *)Data_bigarray_val(inlow),
+                                (const double *)Data_bigarray_val(inclose),
+                                period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_dx_byte(value *argv, int argn)
+{
+  return stub_dx(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+CAMLprim value stub_adx(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_ADX_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_ADX(start_, end_,
+                                (const double *)Data_bigarray_val(inhigh),
+                                (const double *)Data_bigarray_val(inlow),
+                                (const double *)Data_bigarray_val(inclose),
+                                period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_adx_byte(value *argv, int argn)
+{
+  return stub_adx(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+CAMLprim value stub_adxr(value start, value end, value inhigh, value inlow,
+                       value inclose, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLxparam1(period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_ADXR_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_ADXR(start_, end_,
+                                (const double *)Data_bigarray_val(inhigh),
+                                (const double *)Data_bigarray_val(inlow),
+                                (const double *)Data_bigarray_val(inclose),
+                                period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn(result);
+}
+
+CAMLprim value stub_adxr_byte(value *argv, int argn)
+{
+  return stub_adxr(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
 
 CAMLprim value stub_obv (value start, value end, value inprice, value involume)
 {
@@ -674,6 +938,34 @@ CAMLprim value stub_stochf_byte(value *argv, int argn)
 {
   return stub_stochf(argv[0], argv[1], argv[2], argv[3], argv[4],
                     argv[5], argv[6], argv[7]);
+}
+
+CAMLprim value stub_trange (value start, value end, value inhigh, value inlow, value inclose)
+{
+  CAMLparam5(start, end, inhigh, inlow, inclose);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end);
+  int lookback = TA_TRANGE_Lookback();
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_TRANGE(start_, end_,
+                               (const double *) Data_bigarray_val(inhigh),
+                               (const double *) Data_bigarray_val(inlow),
+                               (const double *) Data_bigarray_val(inclose),
+                               &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn (result);
 }
 
 CAMLprim value stub_willr(value start, value end, value inhigh, value inlow,
