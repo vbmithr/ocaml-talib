@@ -187,6 +187,34 @@ CAMLprim value stub_aroon(value start, value end, value inhigh, value inlow, val
   CAMLreturn (result);
 }
 
+CAMLprim value stub_aroonosc(value start, value end, value inhigh, value inlow, value period)
+{
+  CAMLparam5(start, end, inhigh, inlow, period);
+  CAMLlocal1(result);
+
+  int beg_idx, nb_elems;
+  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period);
+  int lookback = TA_AROONOSC_Lookback(period_);
+  int output_size = alloc_size(lookback, start_, end_);
+  double *output = calloc(output_size, sizeof(double));
+
+  if (output == NULL)
+    caml_failwith("Unable to allocate memory");
+
+  raise_exn_on_error(TA_AROONOSC(start_, end_,
+                                 (const double *)Data_bigarray_val(inhigh),
+                                 (const double *)Data_bigarray_val(inlow),
+                                 period_, &beg_idx, &nb_elems, output));
+
+  result = caml_alloc_tuple(3);
+  Store_field(result, 0, Val_int(beg_idx));
+  Store_field(result, 1, Val_int(nb_elems));
+  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
+                                             1, output, output_size));
+
+  CAMLreturn (result);
+}
+
 CAMLprim value stub_atr(value start, value end, value inhigh, value inlow,
                        value inclose, value period)
 {

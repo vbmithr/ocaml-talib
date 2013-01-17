@@ -23,35 +23,101 @@ type ma_type = SMA | EMA | WMA | DEMA | TEMA | TRIMA | KAMA | MAMA | T3
 
 type roc_type = ROC | ROCP | ROCR | ROCR100
 
-external accbands : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real * array_real * array_real =
-    "stub_accbands_byte" "stub_accbands"
-
-external ad : int -> int -> array_real -> array_real -> array_real
-  -> array_real -> int * int * array_real = "stub_ad_byte" "stub_ad"
-
-external adosc : int -> int -> array_real -> array_real
-  -> array_real -> array_real -> int -> int
-    -> int * int * array_real = "stub_adosc_byte" "stub_adosc"
-
-external aroon : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real * array_real = "stub_aroon"
-
-external atr : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real = "stub_atr_byte" "stub_atr"
-
-external bbands : int -> int -> array_real -> int -> float -> float
-  -> ma_type -> int * int * array_real * array_real * array_real = "stub_bbands_byte" "stub_bbands"
-
-external beta : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_beta"
-
-external cci : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_cci_byte" "stub_cci"
+(** Moving Averages *)
 
 external ma : int -> int -> array_real
   -> int -> ma_type -> int * int * array_real = "stub_ma"
 
+(** Trend spotting *)
+
+(** Directional movement and related indicators *)
+
+(** DM+ *)
+external minus_dm : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_minus_dm"
+
+(** DM- *)
+external plus_dm : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_plus_dm"
+
+(** DMI+ *)
+external minus_di : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_minus_di_byte" "stub_minus_di"
+
+(** DMI- *)
+external plus_di : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_plus_di_byte" "stub_plus_di"
+
+(** Directional Movement Index *)
+external dx : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_dx_byte" "stub_dx"
+
+(** Average Directional Movement Index *)
+external adx : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_adx_byte" "stub_adx"
+
+(** Average Directional Movement Index Rating *)
+external adxr : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_adxr_byte" "stub_adxr"
+
+(** Aroon index and oscillator *)
+
+external aroon : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real * array_real = "stub_aroon"
+
+external aroonosc : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_aroonosc"
+
+
+(** Measure of volatility and enveloppes *)
+
+external beta : int -> int -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_beta"
+
+external stddev : int -> int -> array_real -> int -> float
+  -> int * int * array_real = "stub_stddev"
+
+(** True Range *)
+external trange : int -> int -> array_real -> array_real -> array_real
+  -> int * int * array_real = "stub_trange"
+
+(** Average True Range *)
+external atr : int -> int -> array_real -> array_real -> array_real
+  -> int -> int * int * array_real = "stub_atr_byte" "stub_atr"
+
+(** Normalized Average True Range *)
+external natr : int -> int -> array_real -> array_real -> array_real
+  -> int -> int * int * array_real = "stub_natr_byte" "stub_natr"
+
+(** Accerelation Bands *)
+external accbands : int -> int -> array_real -> array_real -> array_real
+  -> int -> int * int * array_real * array_real * array_real =
+    "stub_accbands_byte" "stub_accbands"
+
+(** Bollinger Bands *)
+external bbands : int -> int -> array_real -> int -> float -> float
+  -> ma_type -> int * int * array_real * array_real * array_real = "stub_bbands_byte" "stub_bbands"
+
+(** Volume indexes *)
+
+(** On Balance Volume *)
+external obv : int -> int -> array_real -> array_real ->
+  int * int * array_real = "stub_obv"
+
+(** Volume oscillators *)
+
+(** Accumulation Distribution (AD) *)
+external ad : int -> int -> array_real -> array_real -> array_real
+  -> array_real -> int * int * array_real = "stub_ad_byte" "stub_ad"
+
+(** AD Oscillator *)
+external adosc : int -> int -> array_real -> array_real
+  -> array_real -> array_real -> int -> int
+    -> int * int * array_real = "stub_adosc_byte" "stub_adosc"
+
+(** Momentum indexes and oscillators *)
+
+(** Moving Averages Convergence Divergence *)
 external macd : int -> int -> array_real -> int -> int -> int
   -> int * int * array_real * array_real * array_real = "stub_macd_byte" "stub_macd"
 
@@ -59,54 +125,32 @@ external macdext : int -> int -> array_real ->
   int -> ma_type -> int -> ma_type -> int -> ma_type
     -> int * int * array_real * array_real * array_real = "stub_macdext_byte" "stub_macd"
 
-external minus_dm : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_minus_dm"
-
-external plus_dm : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_plus_dm"
-
-external minus_di : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_minus_di_byte" "stub_minus_di"
-
-external plus_di : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_plus_di_byte" "stub_plus_di"
-
-external dx : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_dx_byte" "stub_dx"
-
-external adx : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_adx_byte" "stub_adx"
-
-external adxr : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_adxr_byte" "stub_adxr"
-
+(** Momentum *)
 external mom : int -> int -> array_real -> int
   -> int * int * array_real = "stub_mom"
 
-external natr : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real = "stub_natr_byte" "stub_natr"
-
-external obv : int -> int -> array_real -> array_real -> int * int * array_real = "stub_obv"
-
+(** Rate of Change *)
 external roc : int -> int -> array_real -> int -> roc_type
   -> int * int * array_real = "stub_roc"
 
+(** Relative Strengh Index *)
 external rsi : int -> int -> array_real -> int
   -> int * int * array_real = "stub_rsi"
 
-external stddev : int -> int -> array_real -> int -> float
-  -> int * int * array_real = "stub_stddev"
-
+(** Slow Stochastic Oscillator *)
 external stoch : int -> int -> array_real -> array_real -> array_real
   -> int -> int -> ma_type -> int -> ma_type
     -> int * int * array_real * array_real = "stub_stoch_byte" "stub_stoch"
 
+(** Fast Stochastic Oscillator *)
 external stochf : int -> int -> array_real -> array_real -> array_real
   -> int -> int -> ma_type ->
     int * int * array_real * array_real = "stub_stochf_byte" "stub_stochf"
 
-external trange : int -> int -> array_real -> array_real -> array_real
-  -> int * int * array_real = "stub_trange"
-
+(** William’s %R *)
 external willr : int -> int -> array_real -> array_real -> array_real -> int
   -> int * int * array_real = "stub_willr_byte" "stub_willr"
+
+(** Commodity Channel Index *)
+external cci : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_cci_byte" "stub_cci"
