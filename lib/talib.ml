@@ -46,6 +46,9 @@ external bbands : int -> int -> array_real -> int -> float -> float
 external beta : int -> int -> array_real -> array_real -> int
   -> int * int * array_real = "stub_beta"
 
+external cci : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_cci_byte" "stub_cci"
+
 external ma : int -> int -> array_real
   -> int -> ma_type -> int * int * array_real = "stub_ma"
 
@@ -55,6 +58,9 @@ external macd : int -> int -> array_real -> int -> int -> int
 external macdext : int -> int -> array_real ->
   int -> ma_type -> int -> ma_type -> int -> ma_type
     -> int * int * array_real * array_real * array_real = "stub_macdext_byte" "stub_macd"
+
+external mom : int -> int -> array_real -> int
+  -> int * int * array_real = "stub_mom"
 
 external obv : int -> int -> array_real -> array_real -> int * int * array_real = "stub_obv"
 
@@ -66,3 +72,14 @@ external rsi : int -> int -> array_real -> int
 
 external stddev : int -> int -> array_real -> int -> float
   -> int * int * array_real = "stub_stddev"
+
+external stoch : int -> int -> array_real -> array_real -> array_real
+  -> int -> int -> ma_type -> int -> ma_type
+    -> int * int * array_real * array_real = "stub_stoch_byte" "stub_stoch"
+
+external stochf : int -> int -> array_real -> array_real -> array_real
+  -> int -> int -> ma_type ->
+    int * int * array_real * array_real = "stub_stochf_byte" "stub_stochf"
+
+external willr : int -> int -> array_real -> array_real -> array_real -> int
+  -> int * int * array_real = "stub_willr_byte" "stub_willr"
