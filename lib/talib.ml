@@ -132,6 +132,14 @@ external macdext : int -> int -> array_real ->
   int -> ma_type -> int -> ma_type -> int -> ma_type
     -> int * int * array_real * array_real * array_real = "stub_macdext_byte" "stub_macd"
 
+(** Absolute Price Oscillator *)
+external apo : int -> int -> array_real -> int -> int -> ma_type
+  -> int * int * array_real = "stub_apo_byte" "stub_apo"
+
+(** Percentage Price Oscillator *)
+external ppo : int -> int -> array_real -> int -> int -> ma_type
+  -> int * int * array_real = "stub_ppo_byte" "stub_ppo"
+
 (** Momentum *)
 external mom : int -> int -> array_real -> int
   -> int * int * array_real = "stub_mom"
