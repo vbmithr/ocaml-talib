@@ -60,14 +60,17 @@ external adx : int -> int -> array_real -> array_real -> array_real -> int
 external adxr : int -> int -> array_real -> array_real -> array_real -> int
   -> int * int * array_real = "stub_adxr_byte" "stub_adxr"
 
-(** Aroon index and oscillator *)
+(** Parabolic SAR *)
+external sar : int -> int -> array_real -> array_real -> float -> float
+  -> int * int * array_real = "stub_sar_byte" "stub_sar"
 
+(** Aroon Index *)
 external aroon : int -> int -> array_real -> array_real -> int
   -> int * int * array_real * array_real = "stub_aroon"
 
+(** Aroon Oscillator *)
 external aroonosc : int -> int -> array_real -> array_real -> int
   -> int * int * array_real = "stub_aroonosc"
-
 
 (** Measure of volatility and enveloppes *)
 
@@ -97,6 +100,10 @@ external accbands : int -> int -> array_real -> array_real -> array_real
 (** Bollinger Bands *)
 external bbands : int -> int -> array_real -> int -> float -> float
   -> ma_type -> int * int * array_real * array_real * array_real = "stub_bbands_byte" "stub_bbands"
+
+(** Donchian channel *)
+external minmax : int -> int -> array_real -> int
+  -> int * int * array_real * array_real = "stub_minmax"
 
 (** Volume indexes *)
 
@@ -154,3 +161,7 @@ external willr : int -> int -> array_real -> array_real -> array_real -> int
 (** Commodity Channel Index *)
 external cci : int -> int -> array_real -> array_real -> array_real -> int
   -> int * int * array_real = "stub_cci_byte" "stub_cci"
+
+(** Ultimate oscillator *)
+external ultosc : int -> int -> array_real -> array_real -> array_real
+  -> int -> int -> int -> int * int * array_real = "stub_ultosc_byte" "stub_ultosc"
