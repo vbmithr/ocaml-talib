@@ -19,7 +19,16 @@ open Bigarray
 
 type array_real = (float, float64_elt, c_layout) Array1.t
 
-type ma_type = SMA | EMA | WMA | DEMA | TEMA | TRIMA | KAMA | MAMA | T3
+type ma_type =
+  | SMA (** Simple Moving Average *)
+  | EMA (** Exponential Moving Average *)
+  | WMA (** Weighted Moving Average *)
+  | DEMA (** Double Exponential Moving Average *)
+  | TEMA (** Triple Exponential Moving Average *)
+  | TRIMA (** Triangular Moving Average *)
+  | KAMA (** Kaufman Adaptive Moving Average *)
+  | MAMA (** MESA Adaptive Moving Average *)
+  | T3 (** Triple Moving Average (T3) *)
 
 type roc_type = ROC | ROCP | ROCR | ROCR100
 
