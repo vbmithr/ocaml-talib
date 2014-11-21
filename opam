@@ -1,0 +1,17 @@
+opam-version: "1.2"
+name: "talib"
+version: "0.1"
+maintainer: "Vincent Bernardoff <vincent.bernardoff@ocamlpro.com>"
+authors: "Vincent Bernardoff <vincent.bernardoff@ocamlpro.com>"
+homepage: "http://github.com/vbmithr/ocaml-talib"
+dev-repo: "git://github.com/vbmithr/ocaml-talib"
+bug-reports: "http://github.com/vbmithr/ocaml-talib/issues"
+license: "GPLv2"
+build: [
+  [ "oasis" "setup" ]
+  [ make "install" ]
+]
+remove: [
+  [ "ocamlfind" "remove" "talib" ]
+]
+depends: ["oasis"]
