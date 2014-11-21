@@ -1,5 +1,5 @@
 (*
- * Copyright (c) 2012 Vincent Bernardoff <vb@luminar.eu.org>
+ * Copyright (c) 2012-2014 Vincent Bernardoff <vb@luminar.eu.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,9 +15,7 @@
  *
  *)
 
-open Bigarray
-
-type array_real = (float, float64_elt, c_layout) Array1.t
+type array_real = (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
 
 type ma_type =
   | SMA (** Simple Moving Average *)
