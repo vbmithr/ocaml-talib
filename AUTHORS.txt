@@ -1,5 +1,0 @@
-(* OASIS_START *)
-(* DO NOT EDIT (digest: 69587c929c9fcd9079c0d75ae6b4b4d7) *)
-Authors of talib
-Vincent Bernardoff
-(* OASIS_STOP *)
