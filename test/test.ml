@@ -1,16 +1,16 @@
-open Bigarray
 open Talib
 
-let input = Array1.create float64 c_layout 100
+let main size =
+  let input = FA.create size in
+  let output = FA.create size in
+  FA.fill input 100.;
+  let start, nb_elts =
+    MA.(compute ~src:input ~dst:output ~period:10 ~kind:SMA ()) in
+  Printf.printf "input_size = %d, start = %d, nb_elts = %d\n" size start nb_elts;
+  for i = start to nb_elts - 1 do
+    try assert (output.{i} = 100.) with _ -> prerr_int i;
+  done
 
-let _ = Array1.fill input 100.
-
-let start, nb_elts, output = ma 0 99 input 16 SMA
-
-
-let _ =
-  Printf.printf "start = %d, nb_elts = %d\n" start nb_elts;
-  for i = 0 to nb_elts-1 do
-    Printf.printf "%.2f " output.{i}
-  done;
-  print_endline ""
+let () =
+  if Array.length Sys.argv < 2 then main (4096 - 4096)
+  else main @@ int_of_string Sys.argv.(1)

@@ -20,11 +20,12 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 #include <caml/bigarray.h>
+#include <caml/threads.h>
 
 #include <sys/param.h>
 #include <ta-lib/ta_func.h>
 
-void raise_exn_on_error(TA_RetCode ret)
+inline void raise_exn_on_error(TA_RetCode ret)
 {
   if (ret != TA_SUCCESS)
     {
@@ -34,10 +35,10 @@ void raise_exn_on_error(TA_RetCode ret)
     }
 }
 
-int alloc_size (int lookback, int startidx, int endidx)
+inline int alloc_size (int lookback, int startidx, int endidx)
 {
-  int max_value = MAX(lookback, startidx);
-  return max_value > endidx ? 0 : endidx-max_value+1;
+  int ret = endidx - MAX(lookback, startidx) + 1;
+  return (ret > 0 ? ret : 0);
 }
 
 CAMLprim value stub_accbands (value start, value end, value inhigh, value inlow,
@@ -387,28 +388,35 @@ CAMLprim value stub_cci_byte(value *argv, int argn)
   return stub_cci(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
 }
 
-CAMLprim value stub_ma (value start, value end, value input, value period, value ma_type)
+CAMLprim value stub_ma (value input, value output, value params)
 {
-  CAMLparam5(start, end, input, period, ma_type);
+  CAMLparam3(input, output, params);
   CAMLlocal1(result);
 
+  TA_RetCode ret;
   int beg_idx, nb_elems;
-  int start_ = Int_val(start), end_ = Int_val(end), period_ = Int_val(period),
-    ma_type_ = Int_val(ma_type);
-  int lookback = TA_MA_Lookback(period_, (TA_MAType) ma_type_);
-  int output_size = alloc_size(lookback, start_, end_);
-  double *output = calloc(output_size, sizeof(double));
-  if (output == NULL)
-    caml_failwith("Unable to allocate memory");
+  int start = Int_val(Field(params, 0));
+  int end = Int_val(Field(params, 1));
+  int period = Int_val(Field(params, 2));
+  int kind = Int_val(Field(params, 3));
+  int lookback = TA_MA_Lookback(period, (TA_MAType) kind);
+  int required_output_size = alloc_size(lookback, start, end);
 
-  raise_exn_on_error(TA_MA(start_, end_, (const double *) Data_bigarray_val(input),
-                           period_, (TA_MAType) ma_type_, &beg_idx, &nb_elems, output));
+  if (Caml_ba_array_val(output)->dim[0] < required_output_size)
+    caml_invalid_argument("dst array is too short");
 
-  result = caml_alloc_tuple(3);
+  caml_release_runtime_system();
+  ret = TA_MA(start, end,
+	      (const double *) Caml_ba_data_val(input),
+	      period, (TA_MAType) kind, &beg_idx, &nb_elems,
+	      (double *) Caml_ba_data_val(output));
+  caml_acquire_runtime_system();
+
+  raise_exn_on_error(ret);
+
+  result = caml_alloc_tuple(2);
   Store_field(result, 0, Val_int(beg_idx));
   Store_field(result, 1, Val_int(nb_elems));
-  Store_field(result, 2, alloc_bigarray_dims(BIGARRAY_FLOAT64|BIGARRAY_C_LAYOUT,
-                                             1, output, output_size));
 
   CAMLreturn (result);
 }

@@ -15,168 +15,176 @@
  *
  *)
 
-type array_real = (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
+module FA = struct
+  open Bigarray
+  type t = (float, float64_elt, c_layout) Array1.t
 
-type ma_type =
-  | SMA (** Simple Moving Average *)
-  | EMA (** Exponential Moving Average *)
-  | WMA (** Weighted Moving Average *)
-  | DEMA (** Double Exponential Moving Average *)
-  | TEMA (** Triple Exponential Moving Average *)
-  | TRIMA (** Triangular Moving Average *)
-  | KAMA (** Kaufman Adaptive Moving Average *)
-  | MAMA (** MESA Adaptive Moving Average *)
-  | T3 (** Triple Moving Average (T3) *)
+  let create = Array1.create float64 c_layout
+  let fill = Array1.fill
+  let length = Array1.dim
+end
 
-type roc_type = ROC | ROCP | ROCR | ROCR100
+module Opt = struct
+  let default d = function
+    | Some v -> v
+    | None -> d
+end
 
 (** Moving Averages *)
+module MA = struct
+  type kind = SMA | EMA | WMA | DEMA | TEMA | TRIMA | KAMA | MAMA | T3
 
-external ma : int -> int -> array_real
-  -> int -> ma_type -> int * int * array_real = "stub_ma"
+  external ma : FA.t -> FA.t -> (int * int * int * kind) -> int * int = "stub_ma"
+
+  let compute ?(pos=0) ?len ~src ~dst ~period ~kind () =
+    let len = Opt.default (FA.length src - 1) len in
+    ma src dst (pos, len, period, kind)
+end
+
+type roc_type = ROC | ROCP | ROCR | ROCR100
 
 (** Trend spotting *)
 
 (** Directional movement and related indicators *)
 
 (** DM+ *)
-external minus_dm : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_minus_dm"
+external minus_dm : int -> int -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_minus_dm"
 
 (** DM- *)
-external plus_dm : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_plus_dm"
+external plus_dm : int -> int -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_plus_dm"
 
 (** DMI+ *)
-external minus_di : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_minus_di_byte" "stub_minus_di"
+external minus_di : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_minus_di_byte" "stub_minus_di"
 
 (** DMI- *)
-external plus_di : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_plus_di_byte" "stub_plus_di"
+external plus_di : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_plus_di_byte" "stub_plus_di"
 
 (** Directional Movement Index *)
-external dx : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_dx_byte" "stub_dx"
+external dx : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_dx_byte" "stub_dx"
 
 (** Average Directional Movement Index *)
-external adx : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_adx_byte" "stub_adx"
+external adx : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_adx_byte" "stub_adx"
 
 (** Average Directional Movement Index Rating *)
-external adxr : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_adxr_byte" "stub_adxr"
+external adxr : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_adxr_byte" "stub_adxr"
 
 (** Parabolic SAR *)
-external sar : int -> int -> array_real -> array_real -> float -> float
-  -> int * int * array_real = "stub_sar_byte" "stub_sar"
+external sar : int -> int -> FA.t -> FA.t -> float -> float
+  -> int * int * FA.t = "stub_sar_byte" "stub_sar"
 
 (** Aroon Index *)
-external aroon : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real * array_real = "stub_aroon"
+external aroon : int -> int -> FA.t -> FA.t -> int
+  -> int * int * FA.t * FA.t = "stub_aroon"
 
 (** Aroon Oscillator *)
-external aroonosc : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_aroonosc"
+external aroonosc : int -> int -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_aroonosc"
 
 (** Measure of volatility and enveloppes *)
 
-external beta : int -> int -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_beta"
+external beta : int -> int -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_beta"
 
-external stddev : int -> int -> array_real -> int -> float
-  -> int * int * array_real = "stub_stddev"
+external stddev : int -> int -> FA.t -> int -> float
+  -> int * int * FA.t = "stub_stddev"
 
 (** True Range *)
-external trange : int -> int -> array_real -> array_real -> array_real
-  -> int * int * array_real = "stub_trange"
+external trange : int -> int -> FA.t -> FA.t -> FA.t
+  -> int * int * FA.t = "stub_trange"
 
 (** Average True Range *)
-external atr : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real = "stub_atr_byte" "stub_atr"
+external atr : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int * int * FA.t = "stub_atr_byte" "stub_atr"
 
 (** Normalized Average True Range *)
-external natr : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real = "stub_natr_byte" "stub_natr"
+external natr : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int * int * FA.t = "stub_natr_byte" "stub_natr"
 
 (** Accerelation Bands *)
-external accbands : int -> int -> array_real -> array_real -> array_real
-  -> int -> int * int * array_real * array_real * array_real =
+external accbands : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int * int * FA.t * FA.t * FA.t =
     "stub_accbands_byte" "stub_accbands"
 
 (** Bollinger Bands *)
-external bbands : int -> int -> array_real -> int -> float -> float
-  -> ma_type -> int * int * array_real * array_real * array_real = "stub_bbands_byte" "stub_bbands"
+external bbands : int -> int -> FA.t -> int -> float -> float
+  -> MA.kind -> int * int * FA.t * FA.t * FA.t = "stub_bbands_byte" "stub_bbands"
 
 (** Donchian channel *)
-external minmax : int -> int -> array_real -> int
-  -> int * int * array_real * array_real = "stub_minmax"
+external minmax : int -> int -> FA.t -> int
+  -> int * int * FA.t * FA.t = "stub_minmax"
 
 (** Volume indexes *)
 
 (** On Balance Volume *)
-external obv : int -> int -> array_real -> array_real ->
-  int * int * array_real = "stub_obv"
+external obv : int -> int -> FA.t -> FA.t ->
+  int * int * FA.t = "stub_obv"
 
 (** Volume oscillators *)
 
 (** Accumulation Distribution (AD) *)
-external ad : int -> int -> array_real -> array_real -> array_real
-  -> array_real -> int * int * array_real = "stub_ad_byte" "stub_ad"
+external ad : int -> int -> FA.t -> FA.t -> FA.t
+  -> FA.t -> int * int * FA.t = "stub_ad_byte" "stub_ad"
 
 (** AD Oscillator *)
-external adosc : int -> int -> array_real -> array_real
-  -> array_real -> array_real -> int -> int
-    -> int * int * array_real = "stub_adosc_byte" "stub_adosc"
+external adosc : int -> int -> FA.t -> FA.t
+  -> FA.t -> FA.t -> int -> int
+    -> int * int * FA.t = "stub_adosc_byte" "stub_adosc"
 
 (** Momentum indexes and oscillators *)
 
 (** Moving Averages Convergence Divergence *)
-external macd : int -> int -> array_real -> int -> int -> int
-  -> int * int * array_real * array_real * array_real = "stub_macd_byte" "stub_macd"
+external macd : int -> int -> FA.t -> int -> int -> int
+  -> int * int * FA.t * FA.t * FA.t = "stub_macd_byte" "stub_macd"
 
-external macdext : int -> int -> array_real ->
-  int -> ma_type -> int -> ma_type -> int -> ma_type
-    -> int * int * array_real * array_real * array_real = "stub_macdext_byte" "stub_macd"
+external macdext : int -> int -> FA.t ->
+  int -> MA.kind -> int -> MA.kind -> int -> MA.kind
+    -> int * int * FA.t * FA.t * FA.t = "stub_macdext_byte" "stub_macd"
 
 (** Absolute Price Oscillator *)
-external apo : int -> int -> array_real -> int -> int -> ma_type
-  -> int * int * array_real = "stub_apo_byte" "stub_apo"
+external apo : int -> int -> FA.t -> int -> int -> MA.kind
+  -> int * int * FA.t = "stub_apo_byte" "stub_apo"
 
 (** Percentage Price Oscillator *)
-external ppo : int -> int -> array_real -> int -> int -> ma_type
-  -> int * int * array_real = "stub_ppo_byte" "stub_ppo"
+external ppo : int -> int -> FA.t -> int -> int -> MA.kind
+  -> int * int * FA.t = "stub_ppo_byte" "stub_ppo"
 
 (** Momentum *)
-external mom : int -> int -> array_real -> int
-  -> int * int * array_real = "stub_mom"
+external mom : int -> int -> FA.t -> int
+  -> int * int * FA.t = "stub_mom"
 
 (** Rate of Change *)
-external roc : int -> int -> array_real -> int -> roc_type
-  -> int * int * array_real = "stub_roc"
+external roc : int -> int -> FA.t -> int -> roc_type
+  -> int * int * FA.t = "stub_roc"
 
 (** Relative Strengh Index *)
-external rsi : int -> int -> array_real -> int
-  -> int * int * array_real = "stub_rsi"
+external rsi : int -> int -> FA.t -> int
+  -> int * int * FA.t = "stub_rsi"
 
 (** Slow Stochastic Oscillator *)
-external stoch : int -> int -> array_real -> array_real -> array_real
-  -> int -> int -> ma_type -> int -> ma_type
-    -> int * int * array_real * array_real = "stub_stoch_byte" "stub_stoch"
+external stoch : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int -> MA.kind -> int -> MA.kind
+    -> int * int * FA.t * FA.t = "stub_stoch_byte" "stub_stoch"
 
 (** Fast Stochastic Oscillator *)
-external stochf : int -> int -> array_real -> array_real -> array_real
-  -> int -> int -> ma_type ->
-    int * int * array_real * array_real = "stub_stochf_byte" "stub_stochf"
+external stochf : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int -> MA.kind ->
+    int * int * FA.t * FA.t = "stub_stochf_byte" "stub_stochf"
 
 (** William’s %R *)
-external willr : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_willr_byte" "stub_willr"
+external willr : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_willr_byte" "stub_willr"
 
 (** Commodity Channel Index *)
-external cci : int -> int -> array_real -> array_real -> array_real -> int
-  -> int * int * array_real = "stub_cci_byte" "stub_cci"
+external cci : int -> int -> FA.t -> FA.t -> FA.t -> int
+  -> int * int * FA.t = "stub_cci_byte" "stub_cci"
 
 (** Ultimate oscillator *)
-external ultosc : int -> int -> array_real -> array_real -> array_real
-  -> int -> int -> int -> int * int * array_real = "stub_ultosc_byte" "stub_ultosc"
+external ultosc : int -> int -> FA.t -> FA.t -> FA.t
+  -> int -> int -> int -> int * int * FA.t = "stub_ultosc_byte" "stub_ultosc"
