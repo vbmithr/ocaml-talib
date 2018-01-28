@@ -1,0 +1,16 @@
+opam-version: "1.2"
+name: "talib"
+version: "0.1"
+authors: "Vincent Bernardoff <vb@luminar.eu.org>"
+maintainer: "Vincent Bernardoff <vb@luminar.eu.org>"
+license: "ISC"
+homepage: "http://github.com/vbmithr/ocaml-talib"
+bug-reports: "http://github.com/vbmithr/ocaml-talib/issues"
+dev-repo: "git://github.com/vbmithr/ocaml-talib.git"
+
+build: [ "jbuilder" "build" "-j" jobs "-p" name "@install" ]
+depends: [
+  "jbuilder" {build & >= "1.0+beta16"}
+  "configurator" {build & >= "v0.10.0"}
+]
+

@@ -1,12 +1,3 @@
-Makefile
-myocamlbuild.ml
-_tags
-configure
-setup.*
 _build
-*.byte
-*.native
-**/*.mldylib
-**/*.mllib
-**/*.clib
-**/META
+*.install
+**/.merlin

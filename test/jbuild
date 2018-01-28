@@ -1,0 +1,11 @@
+(jbuild_version 1)
+
+(executables
+ ((names        (test))
+  (public_names (talib-test))
+  (libraries (talib))))
+
+(alias
+ ((name    runtest)
+  (deps    (test.exe))
+  (action  (run ${<}))))

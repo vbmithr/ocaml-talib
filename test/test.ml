@@ -12,5 +12,4 @@ let main size =
   done
 
 let () =
-  if Array.length Sys.argv < 2 then main (4096 - 4096)
-  else main @@ int_of_string Sys.argv.(1)
+  main (if Array.length Sys.argv < 2 then 256 else int_of_string Sys.argv.(1))
