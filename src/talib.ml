@@ -15,176 +15,80 @@
  *
  *)
 
-module FA = struct
-  open Bigarray
-  type t = (float, float64_elt, c_layout) Array1.t
-
-  let create = Array1.create float64 c_layout
-  let fill = Array1.fill
-  let length = Array1.dim
-end
-
-module Opt = struct
-  let default d = function
-    | Some v -> v
-    | None -> d
-end
-
-(** Moving Averages *)
 module MA = struct
   type kind = SMA | EMA | WMA | DEMA | TEMA | TRIMA | KAMA | MAMA | T3
 
-  external ma : FA.t -> FA.t -> (int * int * int * kind) -> int * int = "stub_ma"
+  external ma :
+    float array -> float array -> int -> kind -> int = "stub_ma" [@@noalloc]
 
-  let compute ?(pos=0) ?len ~src ~dst ~period ~kind () =
-    let len = Opt.default (FA.length src - 1) len in
-    ma src dst (pos, len, period, kind)
+  let compute ~period ~kind ~outbuf ~inbuf =
+    ma outbuf inbuf period kind
 end
 
-type roc_type = ROC | ROCP | ROCR | ROCR100
+module WellesWilder = struct
+  external plus_dm :
+    float array -> float array -> float array -> int -> int = "stub_plus_dm" [@@noalloc]
+  external minus_dm :
+    float array -> float array -> float array -> int -> int = "stub_minus_dm" [@@noalloc]
 
-(** Trend spotting *)
+  let plus_dm ?(period=1) ~out ~high ~low () =
+    plus_dm out high low period
+  let minus_dm ?(period=1) ~out ~high ~low () =
+    minus_dm out high low period
 
-(** Directional movement and related indicators *)
+  external tr :
+    float array -> float array -> float array -> float array -> int = "stub_trange" [@@noalloc]
 
-(** DM+ *)
-external minus_dm : int -> int -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_minus_dm"
+  let tr ~out ~high ~low ~close =
+    tr out high low close
 
-(** DM- *)
-external plus_dm : int -> int -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_plus_dm"
+  external atr :
+    float array -> float array -> float array -> float array -> int -> int = "stub_atr" [@@noalloc]
+  external natr :
+    float array -> float array -> float array -> float array -> int -> int = "stub_natr" [@@noalloc]
 
-(** DMI+ *)
-external minus_di : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_minus_di_byte" "stub_minus_di"
+  let atr ?(period=1) ~out ~high ~low ~close () =
+    atr out high low close period
+  let natr ?(period=1) ~out ~high ~low ~close () =
+    natr out high low close period
 
-(** DMI- *)
-external plus_di : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_plus_di_byte" "stub_plus_di"
+  external minus_di :
+    float array -> float array -> float array -> float array -> int -> int
+    = "stub_minus_di" [@@noalloc]
 
-(** Directional Movement Index *)
-external dx : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_dx_byte" "stub_dx"
+  external plus_di :
+    float array -> float array -> float array -> float array -> int -> int
+    = "stub_plus_di" [@@noalloc]
 
-(** Average Directional Movement Index *)
-external adx : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_adx_byte" "stub_adx"
+  let plus_di ?(period=14) ~out ~high ~low ~close () =
+    plus_di out high low close period
+  let minus_di ?(period=14) ~out ~high ~low ~close () =
+    minus_di out high low close period
 
-(** Average Directional Movement Index Rating *)
-external adxr : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_adxr_byte" "stub_adxr"
+  external dx :
+    float array -> float array -> float array -> float array -> int -> int =
+    "stub_dx" [@@noalloc]
+  external adx :
+    float array -> float array -> float array -> float array -> int -> int =
+    "stub_adx" [@@noalloc]
+  external adxr :
+    float array -> float array -> float array -> float array -> int -> int =
+    "stub_adxr" [@@noalloc]
 
-(** Parabolic SAR *)
-external sar : int -> int -> FA.t -> FA.t -> float -> float
-  -> int * int * FA.t = "stub_sar_byte" "stub_sar"
+  let dx ?(period=14) ~out ~high ~low ~close () =
+    dx out high low close period
+  let adx ?(period=14) ~out ~high ~low ~close () =
+    adx out high low close period
+  let adxr ?(period=14) ~out ~high ~low ~close () =
+    adxr out high low close period
+end
 
-(** Aroon Index *)
-external aroon : int -> int -> FA.t -> FA.t -> int
-  -> int * int * FA.t * FA.t = "stub_aroon"
+module BigTrends = struct
+  external accbands :
+    float array -> float array -> float array ->
+    float array -> float array -> float array -> int -> int =
+    "stub_accbands_byte" "stub_accbands" [@@noalloc]
 
-(** Aroon Oscillator *)
-external aroonosc : int -> int -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_aroonosc"
-
-(** Measure of volatility and enveloppes *)
-
-external beta : int -> int -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_beta"
-
-external stddev : int -> int -> FA.t -> int -> float
-  -> int * int * FA.t = "stub_stddev"
-
-(** True Range *)
-external trange : int -> int -> FA.t -> FA.t -> FA.t
-  -> int * int * FA.t = "stub_trange"
-
-(** Average True Range *)
-external atr : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int * int * FA.t = "stub_atr_byte" "stub_atr"
-
-(** Normalized Average True Range *)
-external natr : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int * int * FA.t = "stub_natr_byte" "stub_natr"
-
-(** Accerelation Bands *)
-external accbands : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int * int * FA.t * FA.t * FA.t =
-    "stub_accbands_byte" "stub_accbands"
-
-(** Bollinger Bands *)
-external bbands : int -> int -> FA.t -> int -> float -> float
-  -> MA.kind -> int * int * FA.t * FA.t * FA.t = "stub_bbands_byte" "stub_bbands"
-
-(** Donchian channel *)
-external minmax : int -> int -> FA.t -> int
-  -> int * int * FA.t * FA.t = "stub_minmax"
-
-(** Volume indexes *)
-
-(** On Balance Volume *)
-external obv : int -> int -> FA.t -> FA.t ->
-  int * int * FA.t = "stub_obv"
-
-(** Volume oscillators *)
-
-(** Accumulation Distribution (AD) *)
-external ad : int -> int -> FA.t -> FA.t -> FA.t
-  -> FA.t -> int * int * FA.t = "stub_ad_byte" "stub_ad"
-
-(** AD Oscillator *)
-external adosc : int -> int -> FA.t -> FA.t
-  -> FA.t -> FA.t -> int -> int
-    -> int * int * FA.t = "stub_adosc_byte" "stub_adosc"
-
-(** Momentum indexes and oscillators *)
-
-(** Moving Averages Convergence Divergence *)
-external macd : int -> int -> FA.t -> int -> int -> int
-  -> int * int * FA.t * FA.t * FA.t = "stub_macd_byte" "stub_macd"
-
-external macdext : int -> int -> FA.t ->
-  int -> MA.kind -> int -> MA.kind -> int -> MA.kind
-    -> int * int * FA.t * FA.t * FA.t = "stub_macdext_byte" "stub_macd"
-
-(** Absolute Price Oscillator *)
-external apo : int -> int -> FA.t -> int -> int -> MA.kind
-  -> int * int * FA.t = "stub_apo_byte" "stub_apo"
-
-(** Percentage Price Oscillator *)
-external ppo : int -> int -> FA.t -> int -> int -> MA.kind
-  -> int * int * FA.t = "stub_ppo_byte" "stub_ppo"
-
-(** Momentum *)
-external mom : int -> int -> FA.t -> int
-  -> int * int * FA.t = "stub_mom"
-
-(** Rate of Change *)
-external roc : int -> int -> FA.t -> int -> roc_type
-  -> int * int * FA.t = "stub_roc"
-
-(** Relative Strengh Index *)
-external rsi : int -> int -> FA.t -> int
-  -> int * int * FA.t = "stub_rsi"
-
-(** Slow Stochastic Oscillator *)
-external stoch : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int -> MA.kind -> int -> MA.kind
-    -> int * int * FA.t * FA.t = "stub_stoch_byte" "stub_stoch"
-
-(** Fast Stochastic Oscillator *)
-external stochf : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int -> MA.kind ->
-    int * int * FA.t * FA.t = "stub_stochf_byte" "stub_stochf"
-
-(** William’s %R *)
-external willr : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_willr_byte" "stub_willr"
-
-(** Commodity Channel Index *)
-external cci : int -> int -> FA.t -> FA.t -> FA.t -> int
-  -> int * int * FA.t = "stub_cci_byte" "stub_cci"
-
-(** Ultimate oscillator *)
-external ultosc : int -> int -> FA.t -> FA.t -> FA.t
-  -> int -> int -> int -> int * int * FA.t = "stub_ultosc_byte" "stub_ultosc"
+  let accbands ?(period=20) ~upper ~middle ~lower ~high ~low ~close () =
+    accbands upper middle lower high low close period
+end

@@ -15,22 +15,6 @@
  *
  *)
 
-(** Bigarrays of float64 *)
-module FA : sig
-  open Bigarray
-  type t = (float, float64_elt, c_layout) Array1.t
-
-  val create : int -> t
-  (** [create 10] is a bigarray of float64 of size 10, containing
-      garbage. *)
-
-  val fill : t -> float -> unit
-  (** [fill t v] writes [v] in each cell of [t]. *)
-
-  val length : t -> int
-end
-
-(** Moving Averages *)
 module MA : sig
   type kind =
     | SMA (** Simple Moving Average *)
@@ -43,13 +27,87 @@ module MA : sig
     | MAMA (** MESA Adaptive Moving Average *)
     | T3 (** Triple Moving Average (T3) *)
 
-  val compute : ?pos:int -> ?len:int -> src:FA.t -> dst:FA.t ->
-    period:int -> kind:kind -> unit -> int * int
-  (** [(pos, len) = compute ~pos ~len ~src ~dst ~period ~kind ()]
-      compute a moving average of type [kind], write the result in
-      [~dst], and return the pos and len where the result were stored.
+  val compute :
+    period:int -> kind:kind -> outbuf:float array -> inbuf:float array -> int
+    (** [compute ~period ~kind ~outbuf ~inbuf] compute a moving
+        average of type [kind], write the result in [outbuf], and
+        return the index from where outbuf contains meaningful data. *)
+end
 
-      {b Raises.} [Invalid_argument] if the the size of [~dst] is
-      insufficient to store the result and [Failure] in case of a
-      TA-Lib error. *)
+module WellesWilder : sig
+  val plus_dm :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> unit -> int
+  val minus_dm :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> unit -> int
+    (** UpMove = today's high − yesterday's high
+        DownMove = yesterday's low − today's low
+        if UpMove > DownMove and UpMove > 0, then +DM = UpMove, else +DM = 0
+        if DownMove > UpMove and DownMove > 0, then −DM = DownMove, else −DM = 0 *)
+
+  val tr :
+    out:float array -> high:float array ->
+    low:float array -> close:float array -> int
+    (** The true range is the largest of the:
+
+        * Most recent period's high minus the most recent period's low
+
+        * Absolute value of the most recent period's high minus the
+        previous close
+
+        * Absolute value of the most recent period's low minus the
+        previous close
+    *)
+
+  val atr :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+    (** ATR_0 = 1/n * sum(TR)
+        ATR_n = 1/n * [ATR_n-1 * (n-1) + TR_t] *)
+
+  val natr :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+
+  val plus_di :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+  val minus_di :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+    (** After selecting the number of periods (Wilder used 14 days
+        originally), +DI and −DI are:
+
+        +DI = 100 times the smoothed moving average of (+DM) divided
+        by average true range
+
+        −DI = 100 times the smoothed moving average of (−DM) divided
+        by average true range *)
+
+  val dx :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+  (** (+DI − −DI) divided by (+DI + −DI) *)
+
+  val adx :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+  (** A.D.X. = 100 times the smoothed moving average of the absolute
+      value of (+DI − −DI) divided by (+DI + −DI) *)
+
+  val adxr :
+    ?period:int -> out:float array -> high:float array ->
+    low:float array -> close:float array -> unit -> int
+  (** Average Directional Movement Rating quantifies momentum change in
+      the ADX. It is calculated by adding two values of ADX (the current
+      value and a value n periods back), then dividing by two. *)
+end
+
+module BigTrends : sig
+  val accbands :
+    ?period:int ->
+    upper:float array -> middle:float array -> lower:float array ->
+    high:float array -> low:float array -> close:float array -> unit -> int
+    (** https://www.bigtrends.com/education/catching-big-trends-with-acceleration-bands/ *)
 end
