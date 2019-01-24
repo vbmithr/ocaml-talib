@@ -1,23 +1,20 @@
-open Base
-open Stdio
-module C = Configurator
-
-let write_sexp fn sexp =
-  Out_channel.write_all fn ~data:(Sexp.to_string sexp)
+module C = Configurator.V1
 
 let () =
-  C.main ~name:"ta-lib" (fun c ->
-      let default : C.Pkg_config.package_conf =
-        { libs   = []
-        ; cflags = []
-        }
-      in
-      let conf =
-        match C.Pkg_config.get c with
+  C.main ~name:"ta-lib" begin fun c ->
+    let default : C.Pkg_config.package_conf =
+      { libs   = []
+      ; cflags = []
+      }
+    in
+    let conf =
+      match C.Pkg_config.get c with
+      | None -> default
+      | Some pc ->
+        match C.Pkg_config.query pc ~package:"ta-lib" with
         | None -> default
-        | Some pc ->
-            Option.value (C.Pkg_config.query pc ~package:"ta-lib") ~default
-      in
-
-      write_sexp "c_flags.sexp"         (sexp_of_list sexp_of_string conf.cflags);
-      write_sexp "c_library_flags.sexp" (sexp_of_list sexp_of_string conf.libs))
+        | Some v -> v
+    in
+    C.Flags.write_sexp "c_flags.sexp" conf.cflags ;
+    C.Flags.write_sexp "c_library_flags.sexp" conf.libs
+  end
